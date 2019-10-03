@@ -20,6 +20,8 @@ amenities_list = []
 sleeping_arr_list = []
 house_comment_list = []
 neighbourhood_result_list = []
+users_list = []
+user_source_list = []
 #open the html and start
 with open ('into.html') as h:
     soup = BeautifulSoup(h, 'lxml')
@@ -129,7 +131,7 @@ print(len(url_list))
 '''
 From here, start to crawl the second page of each house
 '''
-for i in range(5):
+for i in range(84):
     with open('./htmls/' + str(i) + '.html') as pg0:
         soup_pg0 = BeautifulSoup(pg0, 'lxml')
     print("now running" + str(i))
@@ -233,12 +235,22 @@ for i in range(5):
 
         #for elem in aria_valuenow:
             #print(elem.string)
+        print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        l = soup_pg0.body.find_all(class_='_16lonkd')
+        for i in range(len(l)):
+            print('id' + str(i))
+            print(l[i]['href'].split('/')[-1])
+            print("img source")
+            print('img' + l[i].img['src'])
+            users_list.append(l[i]['href'].split('/')[-1])
+            user_source_list.append(l[i].img['src'])
+            print()
 
-
-
-        #print(m)
-
+        print(len(users_list))
+        print(len(user_source_list))
+        print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         #comments
+
         yu = soup_pg0.body.find_all(class_ = '_czm8crp')
 
         for i in range(27, 31):
@@ -322,6 +334,8 @@ for i in range(5):
         print(_1ezjrwzo[3].string)
         neighbourhood_list.append(_1ezjrwzo[3].string)
 
+
+
         #Reviews
         _czm8crp = soup_pg0.body.find_all(class_ = '_czm8crp')
         for int in range(10, 15):
@@ -337,4 +351,3 @@ for i in range(5):
 '''
 do not forget clean all the list!!!
 '''
-print(house_title_list[49])
