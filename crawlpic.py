@@ -131,8 +131,9 @@ print(len(url_list))
 '''
 From here, start to crawl the second page of each house
 '''
-for i in range(84):
+for i in range(101):
     with open('./htmls/' + str(i) + '.html') as pg0:
+    #with open('./htmls/' + '100' + '.html') as pg0:
         soup_pg0 = BeautifulSoup(pg0, 'lxml')
     print("now running" + str(i))
 
@@ -274,13 +275,23 @@ for i in range(84):
             for get in e:
                 print(get)
                 neighbourhood_list.append(str(get))
-        neighbourhood_result_list.append(neighbourhood_list[1])
+        got = '<span class="_czm8crp">'
+        print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+        print(neighbourhood_list)
+        if len(neighbourhood_list) > 1:
+            neighbourhood_result_list.append(neighbourhood_list[1])
+        else:
+            neighbourhood_result_list = []
         for goal in neighbourhood_list:
             goal = str(goal)
             string_tag = "_czm8crp"
+            result = 0
             result = goal.find(string_tag)
-            if result == 1:
+            print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" + str(result))
+
+            if goal == '<span class="_czm8crp">':
                 neighbourhood_list.remove(goal)
+        neighbourhood_result_list = neighbourhood_list
         print(neighbourhood_result_list)
         neighbourhood_list = []
         neighbourhood_result_list = []
