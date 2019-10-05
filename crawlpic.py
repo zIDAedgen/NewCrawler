@@ -6,6 +6,8 @@ import sys
 import htmls
 import re
 import string
+
+import csv
 url = "https://www.airbnb.com.au/s/NSW--Australia/homes?refinement_paths%5B%5D=%2Fhomes&current_tab_id=home_tab&selected_tab_id=home_tab&place_id=ChIJDUte93TLDWsRLZ_EIhGvgBc&source=mc_search_bar&search_type=unknown&screen_size=large&hide_dates_and_guests_filters=false&map_toggle=false"
 r = requests.get(url)
 t = r.text
@@ -22,6 +24,9 @@ house_comment_list = []
 neighbourhood_result_list = []
 users_list = []
 user_source_list = []
+House_interior = []
+House_exterior = []
+Amenities = []
 #open the html and start
 with open ('into.html') as h:
     soup = BeautifulSoup(h, 'lxml')
@@ -59,28 +64,28 @@ for i in range(3, 615, 2):
     #print(house_price[i].next_sibling)
     house_price_list.append(house_price[i].next_sibling)
 
-print(len(house_price_list))
+print((house_price_list))
 
 #3 the number of reviews for each house
 for i in range(4, 615, 2):
     #print(house_price[i].string)
     house_review_list.append(house_price[i].string)
 
-print(len(house_review_list))
+print((house_review_list))
 
 
 
 #4.house stars
 house_star_list = []
 house_stars = soup.find_all(class_ = '_tghtxy2')
-print(len(house_stars))
+
 count = 0
 #print the house star
 for e in house_stars:
     #print(e.string)
     house_star_list.append(e.string)
 
-
+print(house_star_list)
 #5.get the img link for each house
 houseim = soup.find_all(attrs={'class':'_1df8dftk'})
 
@@ -131,7 +136,7 @@ print(len(url_list))
 '''
 From here, start to crawl the second page of each house
 '''
-for i in range(101):
+for i in range(25):
     with open('./htmls/' + str(i) + '.html') as pg0:
     #with open('./htmls/' + '100' + '.html') as pg0:
         soup_pg0 = BeautifulSoup(pg0, 'lxml')
@@ -162,6 +167,8 @@ for i in range(101):
         status = soup_pg0.body.find(class_ = '_1p3joamp')
         print(status.string)
         house_info_list.append(status.string)
+
+
         '''
         print(status.contents)
         for e in status[0].next_sibling:
@@ -179,7 +186,8 @@ for i in range(101):
             print(status_child[i].string)
             house_info_list.append(status_child[i].string)
         print(house_info_list)
-
+        House_interior.append(house_info_list)
+        house_info_list = []
          #status 2 : sparkling clean
         #foursts = soup_pg0.body.find_all(class_ = '_1gw6tte')
 
@@ -206,7 +214,8 @@ for i in range(101):
             for ezch in e.contents:
                 print(ezch.string)
                 introductoin_list.append(ezch.string)
-
+        House_exterior.append(introductoin_list)
+        introductoin_list = []
 
         #4.Amenities
         print("----------------------amentities-------------------------")
@@ -214,7 +223,9 @@ for i in range(101):
         for i in range(10, 13):
             print(t[i].string)
             amenities_list.append(t[i].string)
-
+        Amenities.append(amenities_list)
+        print(Amenities)
+        amenities_list = []
 
         '''
         #sleeping arrangements
@@ -287,9 +298,11 @@ for i in range(101):
             string_tag = "_czm8crp"
             result = 0
             result = goal.find(string_tag)
-            print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" + str(result))
+            #print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" + str(result))
 
             if goal == '<span class="_czm8crp">':
+                neighbourhood_list.remove(goal)
+            if goal == "<br/>":
                 neighbourhood_list.remove(goal)
         neighbourhood_result_list = neighbourhood_list
         print(neighbourhood_result_list)
@@ -318,11 +331,12 @@ for i in range(101):
 
         #2.house info
         _tw4pe52 = soup_pg0.body.find_all(class_ = '_tw4pe52')
-        print(house_info_list)
+        house_info_list.append('PLUS House')
         for i in range(4):
             print(_tw4pe52[i].string)
             house_info_list.append((_tw4pe52[i].string))
-        print(house_info_list)
+        House_interior.append(house_info_list)
+        house_info_list = []
 
         _11oyobo = soup_pg0.body.find(class_ ='_11oyobo')
         print(_11oyobo.string)
@@ -339,6 +353,8 @@ for i in range(101):
         for e in _1gd84tb:
             amenities_list.append(e.string)
         #print(amenities_list)
+        Amenities.append(amenities_list)
+        amenities_list = []
 
         #Location_info
         _1ezjrwzo = soup_pg0.body.find_all(class_ = '_1ezjrwzo')
@@ -359,6 +375,57 @@ for i in range(101):
                     house_comment_list.append(_czm8crp[i].string)
 
 
+
+
+print(location_list)
 '''
 do not forget clean all the list!!!
+title = ['name', 'price', 'location', 'id']
+
+name_array = ['a', 'b', 'c', 'd', 'e']
+price_array = [100, 200, 300, 400, 500]
+location_array = ['brisban', 'Sydney', 'Molben', 'Adlade', 'Perth']
+id_array = [1001, 1002, 2003, 2004, 1005]
+write_in = []
+list = len(name_array)
+while list > 0:
+
+    write_in.append([name_array[list - 1], price_array[list - 1], location_array[list - 1], id_array[list - 1]])
+    list = list - 1
+
+print(write_in)
+file = open('houses.csv', 'w')
+writer = csv.writer(file)
+
+writer.writerow(title)
+for i in range(5):
+    writer.writerow(write_in[i])
+
+file.close()
+
+
+
+
+
+
 '''
+#The title contains 8 features
+title = ['House Name', 'Location', 'Price', 'Review Number', 'Rating', 'House Interior', 'Amenities']
+
+
+
+
+write_in = []
+for i in range(25):
+    write_in.append([house_title_list[i], location_list[i], house_price_list[i], house_review_list[i], house_star_list[i], House_interior[i], Amenities[i]])
+
+
+
+file = open('houses_info.csv', 'w')
+writer = csv.writer(file)
+
+writer.writerow(title)
+for i in range(25):
+    writer.writerow(write_in[i])
+
+file.close()
