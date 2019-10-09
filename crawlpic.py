@@ -27,6 +27,7 @@ user_source_list = []
 House_interior = []
 House_exterior = []
 Amenities = []
+House_pictures = []
 #open the html and start
 with open ('into.html') as h:
     soup = BeautifulSoup(h, 'lxml')
@@ -106,9 +107,9 @@ for e in houseim:
     #print(type(e_string))
     result = e_string.split('")')[0]
     #print(result)
-    house_image_list.append(result)
+    #house_image_list.append(result)
 
-
+#print(house_image_list)
 #7.get the house url, preparing the second page
 
 l = soup.find_all(class_ = '_ttw0d')
@@ -136,7 +137,7 @@ print(len(url_list))
 '''
 From here, start to crawl the second page of each house
 '''
-for i in range(25):
+for i in range(1):
     with open('./htmls/' + str(i) + '.html') as pg0:
     #with open('./htmls/' + '100' + '.html') as pg0:
         soup_pg0 = BeautifulSoup(pg0, 'lxml')
@@ -240,6 +241,16 @@ for i in range(25):
         sleeping_arr_list.append(_152qbzi[-1].next_sibling.next_sibling.string)
         #comments = comments.find_all(lambda tag: tag.has_attr('data-id') and tag.has_attr('id'))
         '''
+        print('--------------------------------image---------------------------')
+        img_info = soup_pg0.body.find_all("img", {"class":"_uttz43"})
+        print((img_info))
+        for a in img_info:
+
+            #print(a['src'])
+            house_image_list.append(a['src'])
+        House_pictures.append(house_image_list)
+        house_image_list = []
+        print(House_pictures)
 
 
         #Reviews
@@ -326,7 +337,7 @@ for i in range(25):
         plus_check = 0
         #1.Location of the house: None
         print("PLUS")
-        location_list.append('plus')
+        location_list.append('Sydney')
 
 
         #2.house info
@@ -337,15 +348,22 @@ for i in range(25):
             house_info_list.append((_tw4pe52[i].string))
         House_interior.append(house_info_list)
         house_info_list = []
-
+        print("----------------------------others-------------------------------")
         _11oyobo = soup_pg0.body.find(class_ ='_11oyobo')
         print(_11oyobo.string)
         house_other_info_list.append(_11oyobo.string)
+        for eles in house_other_info_list:
+            if eles == None:
+                house_other_info_list.remove(eles)
+        print(house_other_info_list)
+        House_exterior.append(house_other_info_list)
+        house_other_info_list = []
 
         #3. introduction
         _tm3vsk = soup_pg0.body.find(class_ = '_tm3vsk')
         print(_tm3vsk.string)
         introductoin_list.append(_tm3vsk.string)
+
 
         #Amenities
         _1gd84tb = soup_pg0.body.find_all(class_ = '_1gd84tb')
@@ -370,9 +388,15 @@ for i in range(25):
                 print("oi")
                 for i in range(int + 1, int + 4):
                     print("-----------------------")
-                    print(_czm8crp[i].string)
+                    print(type((_czm8crp[i].string)))
                     print("----------------------")
-                    house_comment_list.append(_czm8crp[i].string)
+                    if _czm8crp[i].string != None:
+
+                        house_comment_list.append(str(_czm8crp[i].string))
+                    for eles in house_comment_list:
+                        if eles == 'None':
+                            house_comment_list.remove(eles)
+        print(house_comment_list)
 
 
 
@@ -410,14 +434,14 @@ file.close()
 
 '''
 #The title contains 8 features
-title = ['House Name', 'Location', 'Price', 'Review Number', 'Rating', 'House Interior', 'Amenities']
+title = ['House Name', 'Location', 'Price', 'Review Number', 'Rating', 'House Interior', 'Amenities', 'Introduction', 'House Img']
 
 
 
 
 write_in = []
-for i in range(25):
-    write_in.append([house_title_list[i], location_list[i], house_price_list[i], house_review_list[i], house_star_list[i], House_interior[i], Amenities[i]])
+for i in range(1):
+    write_in.append([house_title_list[i], location_list[i], house_price_list[i], house_review_list[i], house_star_list[i], House_interior[i], Amenities[i], House_exterior[i], House_pictures[i]])
 
 
 
@@ -425,7 +449,7 @@ file = open('houses_info.csv', 'w')
 writer = csv.writer(file)
 
 writer.writerow(title)
-for i in range(25):
+for i in range(1):
     writer.writerow(write_in[i])
 
 file.close()
